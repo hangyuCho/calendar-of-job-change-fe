@@ -1,15 +1,75 @@
-import { useState } from "react"
+import { useState, FC } from "react"
 
 const rowHight = 16 
 
+const CalendarRowByHead:FC = ()  => {
+  return (
+    <div className="flex">
+      <div className="w-[14.3%] flex justify-center">日</div>
+      <div className="w-[14.3%] flex justify-center">月</div>
+      <div className="w-[14.3%] flex justify-center">火</div>
+      <div className="w-[14.3%] flex justify-center">水</div>
+      <div className="w-[14.3%] flex justify-center">木</div>
+      <div className="w-[14.3%] flex justify-center">金</div>
+      <div className="w-[14.3%] flex justify-center">土</div>
+    </div>
+  )
+}
+enum ScheduleType {
+  ALL_TIME = "allTime",
+  FIX_TIME = "fixTime"
+}
+interface ScheduleProps {
+  scheduleType: ScheduleType
+  title: string
+  startAt: Date
+  endAt: Date
+}
+
+const scheduleList:Array<ScheduleProps> = [
+  {
+    scheduleType: ScheduleType.ALL_TIME,
+    title: "山の日",
+    startAt: new Date("2023-09-11 00:00:00"),
+    endAt: new Date("2023-09-11 00:00:00")
+  },
+  {
+    scheduleType: ScheduleType.FIX_TIME,
+    title: "ココネ最終面接",
+    startAt: new Date("2023-09-11 11:00:00"),
+    endAt: new Date("2023-09-11 12:00:00")
+  }
+
+]
+
+interface CalendarRowByDaysProps {
+
+}
+const CalendarRowByDays:FC = ({}) => {
+  return (
+    <div className="flex h-16">
+      <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">30</div>
+      <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">31</div>
+      <div className="w-[14.3%] flex justify-center font-bold text-base">1</div>
+      <div className="w-[14.3%] flex justify-center font-bold text-base">2</div>
+      <div className="w-[14.3%] flex justify-center font-bold text-base">3</div>
+      <div className="w-[14.3%] flex justify-center font-bold text-base">4</div>
+      <div className="w-[14.3%] flex justify-center font-bold text-base">5</div>
+    </div>
+  )
+}
+
 const Calendar = () => {
   let [nowMonth, setNowMonth]: [Date, React.Dispatch<React.SetStateAction<Date>>] = useState(new Date())
-  //let [today, setToday]: [Date, React.Dispatch<React.SetStateAction<Date>>] = useState(new Date())
+  let [today, setToday]: [Date, React.Dispatch<React.SetStateAction<Date>>] = useState(new Date())
   let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1)
-  //let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0)
+  let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0)
 
-  //let [calYear, _]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(nowMonth.getFullYear())
-  //
+  let [calYear, setCalYear]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(nowMonth.getFullYear())
+
+  let [calMonth, setCalMonth]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(nowMonth.getFullYear())
+
+  today.setHours(0,0,0,0)
 
   return (
     <div className="flex justify-center items-center text-gray-200">
@@ -24,15 +84,7 @@ const Calendar = () => {
         </div>
         <div className="flex flex-col px-2">
           <div className="text-xs">
-            <div className="flex">
-              <div className="w-[14.3%] flex justify-center">日</div>
-              <div className="w-[14.3%] flex justify-center">月</div>
-              <div className="w-[14.3%] flex justify-center">火</div>
-              <div className="w-[14.3%] flex justify-center">水</div>
-              <div className="w-[14.3%] flex justify-center">木</div>
-              <div className="w-[14.3%] flex justify-center">金</div>
-              <div className="w-[14.3%] flex justify-center">土</div>
-            </div>
+            <CalendarRowByHead/>
             <div className="flex h-16">
               <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">30</div>
               <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">31</div>
