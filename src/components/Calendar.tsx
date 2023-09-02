@@ -1,6 +1,8 @@
-import { useState, FC } from "react"
+import { FC } from "react"
 
 const rowHight = 16 
+const today = new Date()
+today.setHours(0,0,0,0)
 
 const CalendarRowByHead:FC = ()  => {
   return (
@@ -15,6 +17,16 @@ const CalendarRowByHead:FC = ()  => {
     </div>
   )
 }
+enum DayOfWeekType {
+  MON = 0,
+  TUE,
+  WED,
+  THR,
+  FRI,
+  SAT,
+  SUN
+}
+
 enum ScheduleType {
   ALL_TIME = "allTime",
   FIX_TIME = "fixTime"
@@ -29,53 +41,94 @@ interface ScheduleProps {
 const scheduleList:Array<ScheduleProps> = [
   {
     scheduleType: ScheduleType.ALL_TIME,
-    title: "山の日",
-    startAt: new Date("2023-09-11 00:00:00"),
-    endAt: new Date("2023-09-11 00:00:00")
+    title: "敬老の日",
+    startAt: new Date("2023-09-18 00:00:00"),
+    endAt: new Date("2023-09-18 00:00:00")
   },
   {
     scheduleType: ScheduleType.FIX_TIME,
     title: "ココネ最終面接",
     startAt: new Date("2023-09-11 11:00:00"),
     endAt: new Date("2023-09-11 12:00:00")
+  },
+  {
+    scheduleType: ScheduleType.FIX_TIME,
+    title: "旅行",
+    startAt: new Date("2023-09-16 13:00:00"),
+    endAt: new Date("2023-09-19 15:00:00")
   }
-
 ]
 
 interface CalendarRowByDaysProps {
-
+  days: Array<number>
+  index: number
 }
-const CalendarRowByDays:FC = ({}) => {
+
+const isToday = (current: Date) => {
+  return current.getFullYear() == today.getFullYear()
+      && current.getMonth() == today.getMonth()
+      && current.getDate() == today.getDate()
+}
+
+const CalendarRowByDays = ({days, index}: CalendarRowByDaysProps) => {
+  let columns = []
+  let idx = 0
+  let style = "w-[14.3%] flex justify-center font-bold text-base"
+  for (let day of [0,1,2,3,4,5,6]) {
+    idx++
+    let time = days[day]
+    let now = new Date(time)
+    let currentDateIsToday = isToday(now) ? "bg-gray-800 rounded-md": null
+    columns.push(
+            time ? <div key={idx} 
+                    className={`${style} ${currentDateIsToday}`}>
+                    {now.getDate()}
+                    </div>
+                  : <div className={`${style} text-gray-500`}>0</div>
+    )
+
+  }
   return (
-    <div className="flex h-16">
-      <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">30</div>
-      <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">31</div>
-      <div className="w-[14.3%] flex justify-center font-bold text-base">1</div>
-      <div className="w-[14.3%] flex justify-center font-bold text-base">2</div>
-      <div className="w-[14.3%] flex justify-center font-bold text-base">3</div>
-      <div className="w-[14.3%] flex justify-center font-bold text-base">4</div>
-      <div className="w-[14.3%] flex justify-center font-bold text-base">5</div>
+    <div className="flex h-16" key={index}>
+      { columns.map((column) => column) }
     </div>
   )
 }
 
+const getWeeks = () => {
+  let nowMonth:Date = new Date()
+  let firstDate:Date = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1)
+  let lastDate:Date = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0)
+  let days:Array<number> = []
+  let weeks:Array<Array<number>> = []
+  let week: number[] = new Array(7)
+  let idx = 0
+
+  for (let now:Date = firstDate; now.getTime() <= lastDate.getTime(); now.setDate(now.getDate() + 1)) {
+    idx++
+    days.push(now.getTime())
+  }
+  days
+    .forEach((time:number) => {
+      let now = new Date(time)
+      week[now.getDay()] = time
+      if (now.getDay() == 6) {
+        weeks.push(week)
+        week = new Array(7)
+      }
+  })
+  return weeks
+}
+
 const Calendar = () => {
-  let [nowMonth, setNowMonth]: [Date, React.Dispatch<React.SetStateAction<Date>>] = useState(new Date())
-  let [today, setToday]: [Date, React.Dispatch<React.SetStateAction<Date>>] = useState(new Date())
-  let firstDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1)
-  let lastDate = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0)
-
-  let [calYear, setCalYear]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(nowMonth.getFullYear())
-
-  let [calMonth, setCalMonth]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(nowMonth.getFullYear())
-
-  today.setHours(0,0,0,0)
 
   return (
-    <div className="flex justify-center items-center text-gray-200">
+    <div className="flex flex-col justify-center items-center text-gray-200">
+      <div className="bg-indigo-300 text-black">
+      </div>
       <div className="flex flex-col w-[375px] h-[667px] mt-32 bg-black overflow-scroll">
-        <div className="flex justify-between w-full items-center sticky top-0 after:content=[''] after:bg-gray-900 after:opacity-50 after:w-full after:absolute">
-          <span className="text-4xl font-bold w-8/12 pl-2">8</span>
+        <div className="flex justify-between w-full h-32 items-center sticky top-0 after:content=[''] after:bg-gray-900 after:opacity-50 after:w-full after:absolute">
+          <span className="text-4xl font-bold w-8/12 pl-6">{new Date().getMonth()+1}</span>
           <div className="flex justify-end gap-3 w-4/12 pr-2">
             <span>🔍</span>
             <span>📅</span>
@@ -85,6 +138,9 @@ const Calendar = () => {
         <div className="flex flex-col px-2">
           <div className="text-xs">
             <CalendarRowByHead/>
+            {
+              getWeeks().map((el:Array<number>,i:number) => CalendarRowByDays({days: el, index: i}))
+            }
             <div className="flex h-16">
               <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">30</div>
               <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">31</div>
