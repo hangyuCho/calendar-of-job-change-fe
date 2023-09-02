@@ -1,4 +1,5 @@
-import { FC } from "react"
+
+import { FC, useState } from "react"
 
 const today = new Date()
 today.setHours(0,0,0,0)
@@ -16,20 +17,12 @@ const CalendarRowByHead:FC = ()  => {
     </div>
   )
 }
-enum DayOfWeekType {
-  MON = 0,
-  TUE,
-  WED,
-  THR,
-  FRI,
-  SAT,
-  SUN
-}
 
 enum ScheduleType {
   ALL_TIME = "allTime",
   FIX_TIME = "fixTime"
 }
+
 interface ScheduleProps {
   scheduleType: ScheduleType
   title: string
@@ -59,10 +52,6 @@ const scheduleList:Array<ScheduleProps> = [
 ]
 
 
-interface CalendarRowByDaysProps {
-  days: Array<number>
-  index: number
-}
 
 const isToday = (current: Date) => {
   return current.getFullYear() == today.getFullYear()
@@ -70,8 +59,12 @@ const isToday = (current: Date) => {
       && current.getDate() == today.getDate()
 }
 
-const CalendarRowByDays:FC = () => {
-  let nowMonth:Date = new Date()
+interface CalendarRowByDaysProps {
+  currentDate: Date
+}
+
+const CalendarRowByDays = ({currentDate}: CalendarRowByDaysProps) => {
+  let nowMonth:Date = currentDate
   let firstDate:Date = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1)
   let lastDate:Date = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0)
   let days:Array<number> = []
@@ -90,6 +83,8 @@ const CalendarRowByDays:FC = () => {
       if (now.getDay() == 6) {
         weeks.push(week)
         week = new Array(7)
+      } else if (days.length ==  now.getDate()) {
+        weeks.push(week)
       }
   })
   //return weeks
@@ -108,7 +103,7 @@ const CalendarRowByDays:FC = () => {
               time ? <button 
                         type="button" 
                         key={idx++} 
-                        onClick={(e) => onClickHandler(now)}
+                        onClick={() => onClickHandler(now)}
                         className={`${style} ${currentDateIsToday}`}>
                         {now.getDate()}
                       </button>
@@ -134,14 +129,29 @@ const CalendarRowByDays:FC = () => {
 }
 
 const Calendar = () => {
+  let [currentDate, setCurrentDate] = useState(new Date())
 
+  const onPrevMonth = () => {
+    let prevMonthDate:Date = new Date(currentDate.getTime())
+    prevMonthDate.setMonth(prevMonthDate.getMonth() - 1)
+    setCurrentDate(prevMonthDate)
+  }
+
+  const onNextMonth = () => {
+    let nextMonthDate:Date = new Date(currentDate.getTime())
+    nextMonthDate.setMonth(nextMonthDate.getMonth() + 1)
+    setCurrentDate(nextMonthDate)
+  }
   return (
     <div className="flex flex-col justify-center items-center text-gray-200">
-      <div className="bg-indigo-300 text-black">
-      </div>
-      <div className="flex flex-col w-[375px] h-[667px] mt-32 bg-black overflow-scroll">
+      <div className="flex flex-col justify-start w-[375px] h-[667px] mt-32 bg-black overflow-scroll">
+        <div className="flex justify-around bg-indigo-300 text-black">
+          <button type="button" onClick={() => onPrevMonth() } className="border px-2 py-1 rounded-md bg-rose-400">←</button>
+          <button type="button" onClick={() => onNextMonth() } className="border px-2 py-1 rounded-md bg-rose-400">→</button>
+        </div>
         <div className="flex justify-between w-full h-32 items-center sticky top-0 after:content=[''] after:bg-gray-900 after:opacity-50 after:w-full after:absolute">
-          <span className="text-4xl font-bold w-8/12 pl-6">{new Date().getMonth()+1}</span>
+          <span className="text-4xl font-bold w-8/12 pl-6">{currentDate.getMonth()+1}</span>
+          <span className="text-2xl font-bold w-8/12 pl-6 text-gray-700">{currentDate.getFullYear()}</span>
           <div className="flex justify-end gap-3 w-4/12 pr-2">
             <span>🔍</span>
             <span>📅</span>
@@ -151,16 +161,7 @@ const Calendar = () => {
         <div className="flex flex-col px-2">
           <div className="text-xs">
             <CalendarRowByHead/>
-            <CalendarRowByDays/>
-            <div className="flex h-16">
-              <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">30</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">31</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">1</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">2</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">3</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">4</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">5</div>
-            </div>
+            <CalendarRowByDays currentDate={currentDate}/>
             <div className="flex h-16">
               <div className="w-[14.3%] flex justify-center font-bold text-base">6</div>
               <div className="w-[14.3%] flex justify-center font-bold text-base">7</div>
@@ -174,33 +175,6 @@ const Calendar = () => {
                 </div>
               </div>
               <div className="w-[14.3%] flex justify-center font-bold text-base">12</div>
-            </div>
-            <div className="flex h-16">
-              <div className="w-[14.3%] flex justify-center font-bold text-base">13</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">14</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">15</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">16</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">17</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">18</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">19</div>
-            </div>
-            <div className="flex h-16">
-              <div className="w-[14.3%] flex justify-center font-bold text-base">20</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">21</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">22</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">23</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">24</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">25</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">26</div>
-            </div>
-            <div className="flex h-16">
-              <div className="w-[14.3%] flex justify-center font-bold text-base">27</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">28</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">29</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base bg-gray-800 rounded-md">30</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base">31</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">1</div>
-              <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">2</div>
             </div>
           </div>
         </div>
