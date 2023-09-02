@@ -1,6 +1,5 @@
 import { FC } from "react"
 
-const rowHight = 16 
 const today = new Date()
 today.setHours(0,0,0,0)
 
@@ -59,6 +58,7 @@ const scheduleList:Array<ScheduleProps> = [
   }
 ]
 
+
 interface CalendarRowByDaysProps {
   days: Array<number>
   index: number
@@ -70,32 +70,7 @@ const isToday = (current: Date) => {
       && current.getDate() == today.getDate()
 }
 
-const CalendarRowByDays = ({days, index}: CalendarRowByDaysProps) => {
-  let columns = []
-  let idx = 0
-  let style = "w-[14.3%] flex justify-center font-bold text-base"
-  for (let day of [0,1,2,3,4,5,6]) {
-    idx++
-    let time = days[day]
-    let now = new Date(time)
-    let currentDateIsToday = isToday(now) ? "bg-gray-800 rounded-md": null
-    columns.push(
-            time ? <div key={idx} 
-                    className={`${style} ${currentDateIsToday}`}>
-                    {now.getDate()}
-                    </div>
-                  : <div className={`${style} text-gray-500`}>0</div>
-    )
-
-  }
-  return (
-    <div className="flex h-16" key={index}>
-      { columns.map((column) => column) }
-    </div>
-  )
-}
-
-const getWeeks = () => {
+const CalendarRowByDays:FC = () => {
   let nowMonth:Date = new Date()
   let firstDate:Date = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1)
   let lastDate:Date = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0)
@@ -117,7 +92,45 @@ const getWeeks = () => {
         week = new Array(7)
       }
   })
-  return weeks
+  //return weeks
+  let result = weeks.map((week, index) => {
+    let style = "w-[14.3%] flex justify-center font-bold text-base"
+    idx = 0
+    let columns:any[] = []
+    for (let day of [0,1,2,3,4,5,6]) {
+      let time = week[day]
+      let now = new Date(time)
+      let currentDateIsToday = isToday(now) ? "bg-gray-800 rounded-md": null
+      const onClickHandler = (now:Date) => {
+        console.log(now.getDate())
+      }
+      columns.push(
+              time ? <button 
+                        type="button" 
+                        key={idx++} 
+                        onClick={(e) => onClickHandler(now)}
+                        className={`${style} ${currentDateIsToday}`}>
+                        {now.getDate()}
+                      </button>
+                    : <button 
+                        type="button" 
+                        key={idx++} 
+                        className={`${style} text-gray-500`}>
+                        0
+                      </button>
+      )
+    }
+    return (
+      <div className="flex h-16" key={index}>
+        { columns.map((column) => column) }
+      </div>
+    )
+  }) 
+  return (
+    <>
+      {result}
+    </>
+  )
 }
 
 const Calendar = () => {
@@ -138,9 +151,7 @@ const Calendar = () => {
         <div className="flex flex-col px-2">
           <div className="text-xs">
             <CalendarRowByHead/>
-            {
-              getWeeks().map((el:Array<number>,i:number) => CalendarRowByDays({days: el, index: i}))
-            }
+            <CalendarRowByDays/>
             <div className="flex h-16">
               <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">30</div>
               <div className="w-[14.3%] flex justify-center font-bold text-base text-gray-500">31</div>
