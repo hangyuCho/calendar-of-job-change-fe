@@ -1,25 +1,7 @@
 
-import { AnyAction } from "@reduxjs/toolkit"
-import { Dispatch, FC, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { selectedSchedule } from "../store/scheduleReducer"
-
-const today = new Date()
-today.setHours(0,0,0,0)
-
-const CalendarRowByHead:FC = ()  => {
-  return (
-    <div className="flex">
-      <div className="w-[14.3%] flex justify-center">日</div>
-      <div className="w-[14.3%] flex justify-center">月</div>
-      <div className="w-[14.3%] flex justify-center">火</div>
-      <div className="w-[14.3%] flex justify-center">水</div>
-      <div className="w-[14.3%] flex justify-center">木</div>
-      <div className="w-[14.3%] flex justify-center">金</div>
-      <div className="w-[14.3%] flex justify-center">土</div>
-    </div>
-  )
-}
+import { useState } from "react"
+import { useDispatch } from "react-redux"
+import { CalendarRowByHead, CalendarRowByDays } from "./Calendar/index"
 
 enum ScheduleType {
   ALL_TIME = "allTime",
@@ -54,91 +36,8 @@ const scheduleList:Array<ScheduleProps> = [
   }
 ]
 
-
-
-const isToday = (current: Date) => {
-  return isEqualDate(current, today)
-}
-
-const isEqualDate = (date1: Date, date2: Date) => {
-  return date1.getFullYear() == date2.getFullYear()
-      && date1.getMonth() == date2.getMonth()
-      && date1.getDate() == date2.getDate()
-}
-
-interface CalendarRowByDaysProps {
-  currentDate: Date
-}
-
-const CalendarRowByDays = ({currentDate}: CalendarRowByDaysProps) => {
-  let nowMonth:Date = currentDate
-  let firstDate:Date = new Date(nowMonth.getFullYear(), nowMonth.getMonth(), 1)
-  let lastDate:Date = new Date(nowMonth.getFullYear(), nowMonth.getMonth() + 1, 0)
-  let days:Array<number> = []
-  let weeks:Array<Array<number>> = []
-  let week: number[] = new Array(7)
-  let idx = 0
-
-  for (let now:Date = firstDate; now.getTime() <= lastDate.getTime(); now.setDate(now.getDate() + 1)) {
-    idx++
-    days.push(now.getTime())
-  }
-  days
-    .forEach((time:number) => {
-      let now = new Date(time)
-      week[now.getDay()] = time
-      if (now.getDay() == 6) {
-        weeks.push(week)
-        week = new Array(7)
-      } else if (days.length ==  now.getDate()) {
-        weeks.push(week)
-      }
-  })
-  //return weeks
-  let result = weeks.map((week, index) => {
-    let style = "w-[14.3%] flex flex-col justify-start items-center font-bold text-base"
-    idx = 0
-    let columns:any[] = []
-    const selectedDate:number = useSelector((state: any) => state.schedule.time)
-    const dispatch:Dispatch<AnyAction> = useDispatch()
-    for (let day of [0,1,2,3,4,5,6]) {
-      let time:number = week[day]
-      let now:Date = new Date(time)
-      let currentDateIsTodayStyle:string | null = isToday(now) ? "bg-gray-800 rounded-md": null
-      let selectedDateStyle:string | null = isEqualDate(now, new Date(selectedDate)) ? `text-black bg-gray-300 rounded-md` : null
-      const onClickHandler = (selectedDate:Date) => {
-        dispatch(selectedSchedule(selectedDate.getTime()))
-      }
-      columns.push(
-              time ? <button 
-                        type="button" 
-                        key={idx++} 
-                        onClick={() => onClickHandler(now)}
-                        className={`${style} ${selectedDateStyle ? selectedDateStyle : currentDateIsTodayStyle} `}>
-                        {now.getDate()}
-                      </button>
-                    : <button 
-                        type="button" 
-                        key={idx++} 
-                        className={`${style} text-gray-500`}>
-                        0
-                      </button>
-      )
-    }
-    return (
-      <div className="flex h-16" key={index}>
-        { columns.map((column) => column) }
-      </div>
-    )
-  }) 
-  return (
-    <>
-      {result}
-    </>
-  )
-}
-
 const Calendar = () => {
+  
   let [currentDate, setCurrentDate] = useState(new Date())
 
   const onMoveToToday = () => { setCurrentDate( new Date()) }
@@ -155,15 +54,10 @@ const Calendar = () => {
     setCurrentDate(nextMonthDate)
   }
 
-  const selectedDate = useSelector((state: any) => state.schedule.time)
-  const dispatch = useDispatch()
-  
   return (
     <div className="flex flex-col justify-center items-center text-gray-200">
       <div className="flex flex-col justify-start w-[375px] h-[667px] mt-32 bg-black overflow-scroll">
         <div className="flex justify-around bg-indigo-300 text-black">
-          <div>[{new Date(selectedDate).toString()}]</div>
-          <button type="button" onClick={() => dispatch(selectedSchedule(new Date().getTime())) }>hoge</button>
           <button type="button" onClick={() => onPrevMonth() } className="border px-2 py-1 rounded-md bg-rose-400">←</button>
           <button type="button" onClick={() => onMoveToToday() } className="border px-2 py-1 rounded-md bg-rose-400">Today</button>
           <button type="button" onClick={() => onNextMonth() } className="border px-2 py-1 rounded-md bg-rose-400">→</button>
