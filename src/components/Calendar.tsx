@@ -1,5 +1,8 @@
 
-import { FC, useState } from "react"
+import { AnyAction } from "@reduxjs/toolkit"
+import { Dispatch, FC, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { selectedSchedule } from "../store/scheduleReducer"
 
 const today = new Date()
 today.setHours(0,0,0,0)
@@ -54,9 +57,13 @@ const scheduleList:Array<ScheduleProps> = [
 
 
 const isToday = (current: Date) => {
-  return current.getFullYear() == today.getFullYear()
-      && current.getMonth() == today.getMonth()
-      && current.getDate() == today.getDate()
+  return isEqualDate(current, today)
+}
+
+const isEqualDate = (date1: Date, date2: Date) => {
+  return date1.getFullYear() == date2.getFullYear()
+      && date1.getMonth() == date2.getMonth()
+      && date1.getDate() == date2.getDate()
 }
 
 interface CalendarRowByDaysProps {
@@ -89,22 +96,25 @@ const CalendarRowByDays = ({currentDate}: CalendarRowByDaysProps) => {
   })
   //return weeks
   let result = weeks.map((week, index) => {
-    let style = "w-[14.3%] flex justify-center font-bold text-base"
+    let style = "w-[14.3%] flex flex-col justify-start items-center font-bold text-base"
     idx = 0
     let columns:any[] = []
+    const selectedDate:number = useSelector((state: any) => state.schedule.time)
+    const dispatch:Dispatch<AnyAction> = useDispatch()
     for (let day of [0,1,2,3,4,5,6]) {
-      let time = week[day]
-      let now = new Date(time)
-      let currentDateIsToday = isToday(now) ? "bg-gray-800 rounded-md": null
-      const onClickHandler = (now:Date) => {
-        console.log(now.getDate())
+      let time:number = week[day]
+      let now:Date = new Date(time)
+      let currentDateIsTodayStyle:string | null = isToday(now) ? "bg-gray-800 rounded-md": null
+      let selectedDateStyle:string | null = isEqualDate(now, new Date(selectedDate)) ? `text-black bg-gray-300 rounded-md` : null
+      const onClickHandler = (selectedDate:Date) => {
+        dispatch(selectedSchedule(selectedDate.getTime()))
       }
       columns.push(
               time ? <button 
                         type="button" 
                         key={idx++} 
                         onClick={() => onClickHandler(now)}
-                        className={`${style} ${currentDateIsToday}`}>
+                        className={`${style} ${selectedDateStyle ? selectedDateStyle : currentDateIsTodayStyle} `}>
                         {now.getDate()}
                       </button>
                     : <button 
@@ -131,6 +141,8 @@ const CalendarRowByDays = ({currentDate}: CalendarRowByDaysProps) => {
 const Calendar = () => {
   let [currentDate, setCurrentDate] = useState(new Date())
 
+  const onMoveToToday = () => { setCurrentDate( new Date()) }
+
   const onPrevMonth = () => {
     let prevMonthDate:Date = new Date(currentDate.getTime())
     prevMonthDate.setMonth(prevMonthDate.getMonth() - 1)
@@ -142,16 +154,25 @@ const Calendar = () => {
     nextMonthDate.setMonth(nextMonthDate.getMonth() + 1)
     setCurrentDate(nextMonthDate)
   }
+
+  const selectedDate = useSelector((state: any) => state.schedule.time)
+  const dispatch = useDispatch()
+  
   return (
     <div className="flex flex-col justify-center items-center text-gray-200">
       <div className="flex flex-col justify-start w-[375px] h-[667px] mt-32 bg-black overflow-scroll">
         <div className="flex justify-around bg-indigo-300 text-black">
+          <div>[{new Date(selectedDate).toString()}]</div>
+          <button type="button" onClick={() => dispatch(selectedSchedule(new Date().getTime())) }>hoge</button>
           <button type="button" onClick={() => onPrevMonth() } className="border px-2 py-1 rounded-md bg-rose-400">←</button>
+          <button type="button" onClick={() => onMoveToToday() } className="border px-2 py-1 rounded-md bg-rose-400">Today</button>
           <button type="button" onClick={() => onNextMonth() } className="border px-2 py-1 rounded-md bg-rose-400">→</button>
         </div>
         <div className="flex justify-between w-full h-32 items-center sticky top-0 after:content=[''] after:bg-gray-900 after:opacity-50 after:w-full after:absolute">
-          <span className="text-4xl font-bold w-8/12 pl-6">{currentDate.getMonth()+1}</span>
-          <span className="text-2xl font-bold w-8/12 pl-6 text-gray-700">{currentDate.getFullYear()}</span>
+          <div>
+            <span className="text-4xl font-bold w-8/12 pl-6">{currentDate.getMonth()+1}</span>
+            <span className="text-lg font-bold w-8/12 pl-6 text-gray-700">({currentDate.getFullYear()})</span>
+          </div>
           <div className="flex justify-end gap-3 w-4/12 pr-2">
             <span>🔍</span>
             <span>📅</span>
@@ -200,6 +221,21 @@ const Calendar = () => {
               </button>
             </div>
           </div>
+        </div>
+        <div className="hidden">
+          <div className="flex h-16 rounded-md w-[14.3%] justify-center font-bold text-base"></div>
+          <div className="text-black rounded-md"></div>
+          <div className="bg-gray-50"></div>
+          <div className="bg-gray-100"></div>
+          <div className="bg-gray-200"></div>
+          <div className="bg-gray-300"></div>
+          <div className="bg-gray-400"></div>
+          <div className="bg-gray-500"></div>
+          <div className="bg-gray-600"></div>
+          <div className="bg-gray-700"></div>
+          <div className="bg-gray-800"></div>
+          <div className="bg-gray-900"></div>
+          <div className="bg-gray-950"></div>
         </div>
       </div>
     </div>
