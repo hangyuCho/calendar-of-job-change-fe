@@ -3,8 +3,9 @@ import { AnyAction } from "@reduxjs/toolkit"
 import { Dispatch, } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { selectedSchedule } from "../../store/scheduleReducer"
-import { CalendarRowByDaysProps } from "../../types/index"
-import { isEqualDate } from "../../utils/index"
+import { CalendarRowByDaysProps } from "../../types"
+import { isEqualDate } from "../../utils"
+import { ScheduleByHoliday } from "../Schedule"
 
 const today = new Date()
 today.setHours(0,0,0,0)
@@ -45,6 +46,13 @@ const getWeeks = (currentDate: Date) => {
   return weeks
 
 }
+const SUN = 0, 
+      MON = 1, 
+      TUE = 2, 
+      WED = 3, 
+      THU = 4, 
+      FRI = 5, 
+      SAT = 6
 
 const CalendarRowByDays = ({currentDate}: CalendarRowByDaysProps) => {
   const dispatch:Dispatch<AnyAction> = useDispatch()
@@ -57,18 +65,19 @@ const CalendarRowByDays = ({currentDate}: CalendarRowByDaysProps) => {
     let style = "w-[14.3%] flex flex-col justify-start items-center font-bold text-base"
     let idx = 0
     let columns:any[] = []
-    for (let day of [0,1,2,3,4,5,6]) {
-      let time:number = week[day]
+    for (let dayOfTheWeek of [SUN, MON, TUE, WED, THU, FRI, SAT]) {
+      let time:number = week[dayOfTheWeek]
       let now:Date = new Date(time)
       let currentDateIsTodayStyle:string | null = isToday(now) ? "bg-gray-800 rounded-md": null
       let selectedDateStyle:string | null = isEqualDate(now, new Date(selectedDate)) ? `text-black bg-gray-300 rounded-md` : null
+
       columns.push(
               time ? <button 
                         type="button" 
                         key={idx++} 
                         onClick={() => onClickHandler(now)}
                         className={`${style} ${selectedDateStyle ? selectedDateStyle : currentDateIsTodayStyle} `}>
-                        {now.getDate()}
+                        <ScheduleByHoliday targetDate={now} />
                       </button>
                     : <button 
                         type="button" 
