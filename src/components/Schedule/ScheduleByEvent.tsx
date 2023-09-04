@@ -1,18 +1,18 @@
 
 import { ScheduleProps } from "../../types"
-import { getHolidayItem } from "../../utils"
+import { getEventItem } from "../../utils"
 
-const ScheduleByHoliday = ({targetDate}:ScheduleProps) => {
+const ScheduleByEvent = ({targetDate}:ScheduleProps) => {
 
-  const holidayItem = getHolidayItem(targetDate)
+  const eventItem = getEventItem(targetDate)
 
   return (
     <>
       {
-        !holidayItem ? null : 
+        !eventItem ? null : 
                        (<>
                          <div className="flex justify-start bg-purple-200 rounded-sm border-l-4 border-purple-500 items-center gap-2 text-xs w-full text-purple-500">
-                           <span className="text-[8px]">{holidayItem.summary}</span>
+                           <span className="text-[8px]">{eventItem.summary}</span>
                          </div>
                        </>)
       }
@@ -20,4 +20,4 @@ const ScheduleByHoliday = ({targetDate}:ScheduleProps) => {
   )
 }
 
-export default ScheduleByHoliday
+export default ScheduleByEvent

@@ -7,12 +7,12 @@ interface CalendarRowByDaysProps {
   currentDate: Date
 }
 
-interface ScheduleByHolidayProps {
+interface ScheduleProps {
   targetDate:Date
 }
 
 export {
   type CalendarProps,
   type CalendarRowByDaysProps,
-  type ScheduleByHolidayProps
+  type ScheduleProps
 };

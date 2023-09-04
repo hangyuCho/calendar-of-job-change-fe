@@ -4,6 +4,7 @@ import { CalendarRowByHead, CalendarRowByDays } from "./Calendar/index"
 import { useSelector } from "react-redux"
 import holiday from "../data/holiday.json"
 import { isEqualDate } from "../utils"
+import { getHolidayItem, getEventItem } from "../utils"
 
 const Calendar = () => {
   
@@ -25,10 +26,8 @@ const Calendar = () => {
     setCurrentDate(nextMonthDate)
   }
 
-  const holidayItem = 
-    holiday
-      .items
-      .find(el => isEqualDate(new Date(el.start.date), new Date(selectedDate)))
+  const holidayItem = getHolidayItem(selectedDateByTime)
+  const eventItem = getEventItem(selectedDateByTime)
 
   return (
     <div className="flex flex-col justify-center items-center text-gray-200">
@@ -69,6 +68,15 @@ const Calendar = () => {
                     <span className="text-base">終日</span>
                     <span className="w-1 h-full bg-purple-500 rounded-sm"></span>
                     <span className="text-base">{holidayItem.summary}</span>
+                  </button>
+                </div>
+                ) : null}
+                { eventItem ? (
+                <div className="flex text-base">
+                  <button type="button" className="flex justify-start bg-gray-800 px-4 py-2 rounded-md w-full items-center gap-2">
+                    <span className="text-base">終日</span>
+                    <span className="w-1 h-full bg-purple-500 rounded-sm"></span>
+                    <span className="text-base">{eventItem.summary}</span>
                   </button>
                 </div>
                 ) : null}

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { selectedSchedule } from "../../store/scheduleReducer"
 import { CalendarRowByDaysProps } from "../../types"
 import { isEqualDate } from "../../utils"
-import { ScheduleByHoliday } from "../Schedule"
+import { ScheduleByHoliday, ScheduleByEvent } from "../Schedule"
 
 const today = new Date()
 today.setHours(0,0,0,0)
@@ -77,7 +77,9 @@ const CalendarRowByDays = ({currentDate}: CalendarRowByDaysProps) => {
                         key={idx++} 
                         onClick={() => onClickHandler(now)}
                         className={`${style} ${selectedDateStyle ? selectedDateStyle : currentDateIsTodayStyle} `}>
+                        <span>{now.getDate()}</span>
                         <ScheduleByHoliday targetDate={now} />
+                        <ScheduleByEvent targetDate={now} />
                       </button>
                     : <button 
                         type="button" 
