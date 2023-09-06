@@ -30,12 +30,12 @@ const Calendar = () => {
   const eventItem = getEventItem(selectedDateByTime)
 
   return (
-    <div className="flex flex-col justify-center items-center text-gray-200">
-      <div className="flex flex-col justify-start w-[375px] h-[667px] mt-32 bg-black overflow-scroll">
-        <div className="flex justify-around bg-indigo-300 text-black">
-          <button type="button" onClick={() => onPrevMonth() } className="border px-2 py-1 rounded-md bg-rose-400">←</button>
-          <button type="button" onClick={() => onMoveToToday() } className="border px-2 py-1 rounded-md bg-rose-400">Today</button>
-          <button type="button" onClick={() => onNextMonth() } className="border px-2 py-1 rounded-md bg-rose-400">→</button>
+    <div className="flex flex-col justify-start text-gray-200">
+      <div className="flex flex-col justify-start w-[375px] h-[667px] bg-black overflow-scroll">
+        <div className="flex justify-around bg-gray-800 text-black">
+          <button type="button" onClick={() => onPrevMonth() } className="border px-2 py-1 rounded-md bg-black text-white">←</button>
+          <button type="button" onClick={() => onMoveToToday() } className="border px-2 py-1 rounded-md bg-black text-white">Today</button>
+          <button type="button" onClick={() => onNextMonth() } className="border px-2 py-1 rounded-md bg-black text-white">→</button>
         </div>
         <div className="flex justify-between w-full h-32 items-center sticky top-0 after:content=[''] after:bg-gray-900 after:opacity-50 after:w-full after:absolute">
           <div>
