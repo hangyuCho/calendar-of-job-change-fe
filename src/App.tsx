@@ -3,7 +3,7 @@ import { Calendar } from './components/index';
 
 function App() {
   return (
-    <div className="App flex bg-black h-screen">
+    <div className="flex h-screen App">
       <Calendar />
       <AgentArea/>
     </div>

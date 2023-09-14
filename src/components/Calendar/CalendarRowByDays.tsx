@@ -68,7 +68,7 @@ const CalendarRowByDays = ({currentDate}: CalendarRowByDaysProps) => {
     for (let dayOfTheWeek of [SUN, MON, TUE, WED, THU, FRI, SAT]) {
       let time:number = week[dayOfTheWeek]
       let now:Date = new Date(time)
-      let currentDateIsTodayStyle:string | null = isToday(now) ? "bg-gray-800 rounded-md": null
+      let currentDateIsTodayStyle:string | null = isToday(now) ? "bg-gray-200 rounded-md": null
       let selectedDateStyle:string | null = isEqualDate(now, new Date(selectedDate)) ? `text-black bg-gray-300 rounded-md` : null
 
       columns.push(

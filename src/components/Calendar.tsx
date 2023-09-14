@@ -2,8 +2,6 @@
 import { useState } from "react"
 import { CalendarRowByHead, CalendarRowByDays } from "./Calendar/index"
 import { useSelector } from "react-redux"
-import holiday from "../data/holiday.json"
-import { isEqualDate } from "../utils"
 import { getHolidayItem, getEventItem } from "../utils"
 
 const Calendar = () => {
@@ -30,19 +28,19 @@ const Calendar = () => {
   const eventItem = getEventItem(selectedDateByTime)
 
   return (
-    <div className="flex flex-col justify-start text-gray-200">
-      <div className="flex flex-col justify-start w-[375px] h-[667px] bg-black overflow-scroll">
-        <div className="flex justify-around bg-gray-800 text-black">
-          <button type="button" onClick={() => onPrevMonth() } className="border px-2 py-1 rounded-md bg-black text-white">←</button>
-          <button type="button" onClick={() => onMoveToToday() } className="border px-2 py-1 rounded-md bg-black text-white">Today</button>
-          <button type="button" onClick={() => onNextMonth() } className="border px-2 py-1 rounded-md bg-black text-white">→</button>
+    <div className="flex flex-col justify-start text-gray-800">
+      <div className="flex flex-col justify-start w-[375px] h-[667px] bg-gray-50 overflow-scroll">
+        <div className="flex justify-around text-black bg-gray-100">
+          <button type="button" onClick={() => onPrevMonth() } className="px-2 py-1 text-black bg-blue-400 border rounded-md">←</button>
+          <button type="button" onClick={() => onMoveToToday() } className="px-2 py-1 text-black bg-blue-400 border rounded-md">Today</button>
+          <button type="button" onClick={() => onNextMonth() } className="px-2 py-1 text-black bg-blue-400 border rounded-md">→</button>
         </div>
         <div className="flex justify-between w-full h-32 items-center sticky top-0 after:content=[''] after:bg-gray-900 after:opacity-50 after:w-full after:absolute">
           <div>
-            <span className="text-4xl font-bold w-8/12 pl-6">{currentDate.getMonth()+1}</span>
-            <span className="text-lg font-bold w-8/12 pl-6 text-gray-700">({currentDate.getFullYear()})</span>
+            <span className="w-8/12 pl-6 text-4xl font-bold">{currentDate.getMonth()+1}</span>
+            <span className="w-8/12 pl-6 text-lg font-bold text-gray-700">({currentDate.getFullYear()})</span>
           </div>
-          <div className="flex justify-end gap-3 w-4/12 pr-2">
+          <div className="flex justify-end w-4/12 gap-3 pr-2">
             <span>🔍</span>
             <span>📅</span>
             <span>⚙️</span>
@@ -61,10 +59,10 @@ const Calendar = () => {
               <div className="flex gap-2">
                 <span> {selectedDateByTime.getFullYear()}年{selectedDateByTime.getMonth() + 1}月{selectedDateByTime.getDate()}日(水)</span>
               </div>
-              <div className="flex flex-col mt-2 gap-2">
+              <div className="flex flex-col gap-2 mt-2">
                 { holidayItem ? (
                 <div className="flex text-base">
-                  <button type="button" className="flex justify-start bg-gray-800 px-4 py-2 rounded-md w-full items-center gap-2">
+                  <button type="button" className="flex items-center justify-start w-full gap-2 px-4 py-2 text-gray-100 bg-blue-400 rounded-md">
                     <span className="text-base">終日</span>
                     <span className="w-1 h-full bg-purple-500 rounded-sm"></span>
                     <span className="text-base">{holidayItem.summary}</span>
@@ -73,18 +71,18 @@ const Calendar = () => {
                 ) : null}
                 { eventItem ? (
                 <div className="flex text-base">
-                  <button type="button" className="flex justify-start bg-gray-800 px-4 py-2 rounded-md w-full items-center gap-2">
+                  <button type="button" className="flex items-center justify-start w-full gap-2 px-4 py-2 text-gray-100 bg-blue-400 rounded-md">
                     <span className="text-base">終日</span>
                     <span className="w-1 h-full bg-purple-500 rounded-sm"></span>
                     <span className="text-base">{eventItem.summary}</span>
                   </button>
                 </div>
                 ) : null}
-                <div className="flex text-base gap-2 items-center">
-                  <button type="button" className="flex justify-start bg-gray-800 px-4 py-2 rounded-md w-10/12">
+                <div className="flex items-center gap-2 text-base">
+                  <button type="button" className="flex justify-start w-10/12 px-4 py-2 text-gray-100 bg-blue-400 rounded-md">
                     <span className="text-base">+ 新しいイベント</span>
                   </button>
-                  <button type="button" className="flex justify-center bg-gray-800 px-4 py-2 rounded-md w-2/12">
+                  <button type="button" className="flex justify-center w-2/12 px-4 py-2 text-gray-100 bg-blue-400 rounded-md">
                     <span>⚙️</span>
                   </button>
                 </div>
@@ -109,13 +107,13 @@ const Calendar = () => {
           <div className="bg-gray-950"></div>
           <div className="text-red-500"></div>
           <div className="flex text-base">
-            <button type="button" className="flex justify-start bg-gray-800 px-4 py-2 rounded-md w-full items-center gap-2">
+            <button type="button" className="flex items-center justify-start w-full gap-2 px-4 py-2 bg-gray-800 rounded-md">
               <span className="text-base">終日</span>
               <span className="w-1 h-full bg-purple-500 rounded-sm"></span>
               <span className="text-base">山の日</span>
             </button>
           </div>
-          <div className="flex justify-start bg-purple-200 rounded-sm border-l-4 border-purple-500 items-center gap-2 text-xs w-full text-purple-500">
+          <div className="flex items-center justify-start w-full gap-2 text-xs text-purple-500 bg-purple-200 border-l-4 border-purple-500 rounded-sm">
             <span className="">山の日</span>
           </div>
         </div>
